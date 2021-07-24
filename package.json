@@ -11,9 +11,21 @@
     "lint:fix": "eslint --fix --ext .ts,.tsx --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@chakra-ui/icons": "^1.0.14",
+    "@chakra-ui/react": "^1.6.5",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
+    "@fleekhq/fleek-storage-js": "^1.0.17",
+    "@onflow/fcl": "^0.0.76",
+    "@onflow/types": "^0.0.4",
+    "aws-sdk": "^2.951.0",
+    "fcl-kms-authorizer": "^0.0.6",
+    "framer-motion": "^4.1.17",
     "next": "^10.2.0",
+    "nft.storage": "^3.0.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-spinners": "^0.11.0"
   },
   "devDependencies": {
     "@types/node": "^14.0.5",

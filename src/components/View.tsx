@@ -30,18 +30,19 @@ export const View = props => {
     <Container ml={0} mr={4} mt={4} maxWidth="3xl">
       <SimpleGrid columns={[1, 2, 4]}>
         {nftsData ? nftsData.map((data) => {
+          const { id, name, description, image } = data;
           return (
             <LinkBox>
-              <Text my={2} fontSize="xs" as="kbd">#{data.id}</Text>
+              <Text my={2} fontSize="xs" as="kbd">#{id}</Text>
               <AspectRatio maxW="400px" ratio={1}>
-                <Image src={data.image} alt={'#' + data.id} objectFit="cover" />
+                <Image src={image} alt={'#' + id} objectFit="cover" />
               </AspectRatio>
               <Stack align={{ base: "center", md: "stretch" }} textAlign={{ base: "center", md: "left" }} mt={{ base: 4, md: 2 }} ml={{ md: 2 }}>
                 <Text fontWeight="bold" textTransform="uppercase" fontSize="lg" letterSpacing="wide" color="teal.600">
-                  {data.name || ''}
+                  {name || ''}
                 </Text>
                 <Text my={2} color="gray.500">
-                  {data.description || 'bbb'}
+                  {description || ''}
                 </Text>
               </Stack>
             </LinkBox>

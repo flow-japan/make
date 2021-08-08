@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
+  Button,
+  Box,
+  Stack,
   Tabs,
   TabList,
   TabPanels,
@@ -7,51 +10,75 @@ import {
   TabPanel,
   Spacer,
   Text,
-  Link as ChakraLink,
 } from '@chakra-ui/react';
-import { LinkIcon } from '@chakra-ui/icons';
 import { Title } from '../components/Title';
 import { Container } from '../components/Container';
 import { Main } from '../components/Main';
-import { ConnectButton } from '../components/ConnectButton';
-import { View } from '../components/View';
+import { ViewCollection } from '../components/ViewCollection';
+import { ViewShowcase } from '../components/ViewShowcase';
 import { Create } from '../components/Create';
+import { Footer } from '../components/Footer';
 import { flow } from '../services/flow';
 
 const Index = () => {
   const [user, setUser] = useState({});
 
-  useEffect(() => flow.setCurrentUser(setUser), []);
+  const SignInOutButton = ({ user }) => {
+    const signInOrOut = (event) => {
+      event.preventDefault();
+      if (user.loggedIn) {
+        flow.unauthenticate();
+      } else {
+        flow.setCurrentUser(setUser);
+        flow.authenticate();
+      }
+    };
+    return user.loggedIn ? (
+      <Stack>
+        <Text color={'gray.700'} fontSize={'md'} as="ins">
+          {user.addr}
+        </Text>
+        <Box position="fixed" top="2.5rem" right="1rem">
+          <Button size="sm" onClick={signInOrOut}>
+            Sign out
+          </Button>
+        </Box>
+      </Stack>
+    ) : (
+      <Button size="sm" onClick={signInOrOut}>
+        Connect
+      </Button>
+    );
+  };
 
   return (
     <Container height="100vh">
       <Title />
+      <Box position="fixed" top="1rem" right="1rem">
+        <SignInOutButton user={user} />
+      </Box>
       <Main>
         <Tabs isFitted variant="enclosed" m={4} size="sm">
           <TabList>
-            <Tab>EXPLORE</Tab>
-            <Tab>VIEW</Tab>
-            <Tab>CREATE</Tab>
+            <Tab>みんなのNFT</Tab>
+            <Tab>自分のNFT</Tab>
+            <Tab>発行</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Text as="kbd" ml={4} mt={8}>
-                Under contruction.
-              </Text>
+              <ViewShowcase />
             </TabPanel>
             <TabPanel>
-              <View user={user} />
+              <ViewCollection />
             </TabPanel>
             <TabPanel>
-              <Create user={user} />
+              <Create />
             </TabPanel>
           </TabPanels>
         </Tabs>
-        <ConnectButton user={user} />
       </Main>
-
       <Spacer />
-      <Text as="kbd" fontSize="small" pb={1} textColor="gray.500">
+      {/* <Text as="kbd" fontSize="small" pb={1} textColor="gray.500">
         Built on{' '}
         <ChakraLink
           isExternal
@@ -80,7 +107,8 @@ const Index = () => {
         >
           GitHub <LinkIcon />
         </ChakraLink>
-      </Text>
+      </Text> */}
+      <Footer />
     </Container>
   );
 };

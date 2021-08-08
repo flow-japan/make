@@ -28,7 +28,7 @@ import {
 } from '@chakra-ui/react';
 import { flow } from '../services/flow';
 
-export const ItemTemplateTable = (props) => {
+export const ItemTable = (props) => {
   const [isSending, setIsSending] = useState(false);
   const [collectibleDataId, setCollectibleDataId] = useState(null);
   const [mintNum, setMintNum] = useState(1);
@@ -38,21 +38,11 @@ export const ItemTemplateTable = (props) => {
     setMintNum(value);
   };
 
-  const clearModal = () => {
-    onClose();
-    setMintNum(1);
-    setIsSending(false);
-  };
-
   const sendMintTransaction = async () => {
     setIsSending(true);
     try {
       const result = await flow.mintNFT(collectibleDataId, mintNum);
-      if (result) {
-        console.log(result);
-        clearModal();
-        props.updateItemTemplates();
-      }
+      console.log(result);
     } catch (e) {
       console.log(e);
     } finally {
@@ -66,28 +56,35 @@ export const ItemTemplateTable = (props) => {
     onOpen();
   };
 
-  return (
+  return !props.items ? null : (
     <>
       <Table colorScheme="teal">
         <Thead>
           <Tr>
-            <Th>Image</Th>
-            <Th>Name</Th>
-            <Th>Minted</Th>
-            <Th>Limit</Th>
-            <Th>Action</Th>
+            <Th>ID</Th>
+            <Th>画像</Th>
+            <Th>名前</Th>
+            <Th>説明</Th>
+            <Th>アクション</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {props.itemTemplates.map((itemTemplate, index) => {
+          {props.items.map((item, index) => {
             return (
               <Tr key={index}>
                 <Td>
+                  <Text my={2} color="gray.500">
+                    {item.id}
+                  </Text>
+                </Td>
+                <Td>
                   <Image
-                    maxWidth="100px"
+                    maxWidth="200px"
                     margin="auto"
-                    src={itemTemplate.image}
-                    alt={itemTemplate.name}
+                    src={item.image}
+                    alt={item.name}
+                    borderRadius="lg"
+                    boxShadow="lg"
                   />
                 </Td>
                 <Td>
@@ -97,17 +94,17 @@ export const ItemTemplateTable = (props) => {
                     letterSpacing="wide"
                     color="teal.600"
                   >
-                    {itemTemplate.name}
-                  </Text>
-                  <Text my={2} color="gray.500">
-                    {itemTemplate.description}
+                    {item.name}
                   </Text>
                 </Td>
-                <Td isNumeric>{itemTemplate.mintedCount}</Td>
-                <Td isNumeric>{itemTemplate.limit}</Td>
                 <Td>
-                  <Button size="sm" onClick={() => mint(itemTemplate.id)}>
-                    Mint
+                  <Text my={2} color="gray.500">
+                    {item.description}
+                  </Text>
+                </Td>
+                <Td>
+                  <Button size="sm" onClick={() => mint(item.id)}>
+                    みんなにみせる
                   </Button>
                 </Td>
               </Tr>

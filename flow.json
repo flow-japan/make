@@ -7,7 +7,8 @@
 	},
 	"contracts": {
 		"NonFungibleToken": "./cadence/contracts/NonFungibleToken.cdc",
-		"Collectible": "./cadence/contracts/Collectible.cdc"
+		"Collectible": "./cadence/contracts/Collectible.cdc",
+		"Showcase": "./cadence/contracts/Showcase.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -30,10 +31,10 @@
 	},
 	"deployments": {
 		"emulator": {
-			"emulator-account": ["NonFungibleToken", "Collectible"]
+			"emulator-account": ["NonFungibleToken", "Collectible", "Showcase"]
 		},
 		"testnet": {
-			"testnetAccount1": ["Collectible"]
+			"testnetAccount1": ["Collectible", "Showcase"]
 		}
 	}
 }

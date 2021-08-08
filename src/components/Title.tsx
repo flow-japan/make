@@ -1,18 +1,8 @@
 import React from 'react';
-import { Flex, Heading } from '@chakra-ui/react';
+import { Flex, Image } from '@chakra-ui/react';
 
-export const Title = ({ title }) => (
-  <Flex justifyContent="center" alignItems="center" height="10vh" m={4}>
-    <Heading
-      fontSize="6vw"
-      bgGradient="linear(to-l, #7928CA, #FF0080)"
-      bgClip="text"
-    >
-      {title}
-    </Heading>
+export const Title = () => (
+  <Flex justifyContent="center" alignItems="center" height="12vh" m={4}>
+    <Image src="/logo.png" alt="Make! NFT" height="100px" mt={8} mb={6} />
   </Flex>
 );
-
-Title.defaultProps = {
-  title: "Let's mint on Flow 🌊",
-};

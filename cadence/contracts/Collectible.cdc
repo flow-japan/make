@@ -12,77 +12,22 @@ pub contract Collectible: NonFungibleToken {
     pub let MinterPublicPath: PublicPath
 
     pub var totalSupply: UInt64
-    pub var collectibleData: {UInt64: CollectibleData}
-    pub var collectibleDataCount: UInt64
-    pub var mintedCountPerCollectibleData: {UInt64: UInt64}
-
-    pub struct CollectibleData {
-        pub(set) var metadata: {String: String}
-        pub let limit: UInt64
-
-        init(metadata: {String: String}, limit: UInt64) {
-            self.metadata = metadata
-            self.limit = limit
-        }
-    }
 
     pub resource NFT: NonFungibleToken.INFT {
         pub let id: UInt64
-        pub let collectibleDataId: UInt64
+        pub let metadata: {String: String}
 
-        pub fun getMetadata(): {String: String} {
-            return Collectible.collectibleData[self.collectibleDataId]!.metadata
-        }
-
-        init(collectibleDataId: UInt64) {
-            pre {
-                Collectible.collectibleData[collectibleDataId] != nil: "Not Found CollectibleData"
-                Collectible.collectibleData[collectibleDataId]!.limit >= Collectible.mintedCountPerCollectibleData[collectibleDataId]! + 1 as UInt64: "Cannot mint any more"
-            }
-            Collectible.mintedCountPerCollectibleData[collectibleDataId] = Collectible.mintedCountPerCollectibleData[collectibleDataId]! + 1 as UInt64
+        init(metadata: {String: String}) {
             Collectible.totalSupply = Collectible.totalSupply + 1 as UInt64
             self.id = Collectible.totalSupply
-            self.collectibleDataId = collectibleDataId
+            self.metadata = metadata
         }
     }
 
-    pub resource interface CollectibleMinterPublic {
-        pub fun getCreatedCollectibleDataIDs(): [UInt64]
-        pub fun getCreatedCollectibleData(collectibleDataId: UInt64): CollectibleData?
-    }
-
-    pub resource Minter: CollectibleMinterPublic {
-        access(self) var collectibleData: {UInt64: CollectibleData}
-
-        pub fun createCollectibleData(metadata: {String: String}, limit: UInt64): UInt64 {
-            Collectible.collectibleDataCount = Collectible.collectibleDataCount + 1 as UInt64
-            Collectible.mintedCountPerCollectibleData[Collectible.collectibleDataCount] = 0
-            self.collectibleData[Collectible.collectibleDataCount] = CollectibleData(
-                metadata: metadata,
-                limit: limit
-            )
-            return Collectible.collectibleDataCount
-        }
-
-        pub fun mintNFT(collectibleDataId: UInt64): @NFT {
-            pre {
-                self.collectibleData.containsKey(collectibleDataId): "Not have permission to mint the NFT of the target collectibleDataId"
-            }
-            Collectible.collectibleData[collectibleDataId] = self.collectibleData[collectibleDataId]
-            let nft <- create NFT(collectibleDataId: collectibleDataId)
+    pub resource Minter {
+        pub fun mintNFT(metadata: {String: String}): @NFT {
+            let nft <- create NFT(metadata: metadata)
             return <- nft
-        }
-
-        pub fun getCreatedCollectibleDataIDs(): [UInt64] {
-            return self.collectibleData.keys
-        }
-
-        pub fun getCreatedCollectibleData(collectibleDataId: UInt64): CollectibleData? {
-            return self.collectibleData[collectibleDataId]
-        }
-
-        init() {
-            self.collectibleData = {}
         }
     }
 
@@ -160,15 +105,12 @@ pub contract Collectible: NonFungibleToken {
     }
 
     init() {
-        self.CollectionStoragePath = /storage/CollectibleCollection000
-        self.CollectionPublicPath = /public/CollectibleCollection000
-        self.MinterStoragePath = /storage/CollectibleMinter000
-        self.MinterPublicPath = /public/CollectibleMinter000
+        self.CollectionStoragePath = /storage/CollectibleCollection001
+        self.CollectionPublicPath = /public/CollectibleCollection001
+        self.MinterStoragePath = /storage/CollectibleMinter001
+        self.MinterPublicPath = /public/CollectibleMinter001
 
         self.totalSupply = 0
-        self.collectibleData = {}
-        self.collectibleDataCount = 0
-        self.mintedCountPerCollectibleData = {}
         self.account.save<@Collection>(<- create Collection(), to: self.CollectionStoragePath)
         self.account.link<&{CollectibleCollectionPublic}>(self.CollectionPublicPath, target: self.CollectionStoragePath)
         emit ContractInitialized()

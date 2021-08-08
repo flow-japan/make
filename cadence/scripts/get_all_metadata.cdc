@@ -11,9 +11,10 @@ pub fun main(addr: Address): [{String: String}] {
     let ids = collection.getIDs()
     for id in ids {
         let token = collection.borrowCollectible(id: id)
-        let metadata = token.getMetadata()
+        let metadata = token.metadata
         metadata["id"] = token.id.toString()
         metadataArray.append(metadata)
     }
     return metadataArray
 }
+ 

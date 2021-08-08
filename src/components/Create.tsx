@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ItemTemplateTable } from '../components/ItemTemplateTable';
 import { CreateItemTemplateModal } from './CreateItemTemplateModal';
 import { flow } from '../services/flow';
 
-export const Create = props => {
-  const [ itemTemplates, setItemTemplates ] = useState([]);
+export const Create = () => {
+  const [itemTemplates, setItemTemplates] = useState([]);
 
   const updateItemTemplates = async () => {
     const result = await flow.getCreatedCollectibleData();
@@ -18,7 +18,10 @@ export const Create = props => {
   return (
     <>
       <CreateItemTemplateModal updateItemTemplates={updateItemTemplates} />
-      <ItemTemplateTable itemTemplates={itemTemplates} updateItemTemplates={updateItemTemplates} />
+      <ItemTemplateTable
+        itemTemplates={itemTemplates}
+        updateItemTemplates={updateItemTemplates}
+      />
     </>
-  )
-}
+  );
+};

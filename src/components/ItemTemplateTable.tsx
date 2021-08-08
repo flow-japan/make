@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import {
   Text,
@@ -25,22 +25,24 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   useDisclosure,
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
 import { flow } from '../services/flow';
 
-export const ItemTemplateTable = props => {
-  const [ isSending, setIsSending ] = useState(false);
-  const [ collectibleDataId, setCollectibleDataId ] = useState(null);
-  const [ mintNum, setMintNum ] = useState(1);
+export const ItemTemplateTable = (props) => {
+  const [isSending, setIsSending] = useState(false);
+  const [collectibleDataId, setCollectibleDataId] = useState(null);
+  const [mintNum, setMintNum] = useState(1);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const updateMintNum = value => { setMintNum(value); };
+  const updateMintNum = (value) => {
+    setMintNum(value);
+  };
 
   const clearModal = () => {
     onClose();
     setMintNum(1);
     setIsSending(false);
-  }
+  };
 
   const sendMintTransaction = async () => {
     setIsSending(true);
@@ -56,13 +58,13 @@ export const ItemTemplateTable = props => {
     } finally {
       setIsSending(false);
     }
-  }
+  };
 
   const mint = (id) => {
     console.log('mint', id);
     setCollectibleDataId(id);
     onOpen();
-  }
+  };
 
   return (
     <>
@@ -78,39 +80,48 @@ export const ItemTemplateTable = props => {
         </Thead>
         <Tbody>
           {props.itemTemplates.map((itemTemplate, index) => {
-            return <Tr key={index}>
-              <Td>
-                <Image
-                  maxWidth="100px"
-                  margin="auto"
-                  src={itemTemplate.image}
-                  alt={itemTemplate.name}
-                />
-              </Td>
-              <Td>
-                <Text
-                  fontWeight="bold"
-                  fontSize="md"
-                  letterSpacing="wide"
-                  color="teal.600"
-                >
-                  {itemTemplate.name}
-                </Text>
-                <Text my={2} color="gray.500">
-                  {itemTemplate.description}
-                </Text>
-              </Td>
-              <Td isNumeric>{itemTemplate.mintedCount}</Td>
-              <Td isNumeric>{itemTemplate.limit}</Td>
-              <Td>
-                <Button size="sm" onClick={ () => mint(itemTemplate.id) }>Mint</Button>
-              </Td>
-            </Tr>
+            return (
+              <Tr key={index}>
+                <Td>
+                  <Image
+                    maxWidth="100px"
+                    margin="auto"
+                    src={itemTemplate.image}
+                    alt={itemTemplate.name}
+                  />
+                </Td>
+                <Td>
+                  <Text
+                    fontWeight="bold"
+                    fontSize="md"
+                    letterSpacing="wide"
+                    color="teal.600"
+                  >
+                    {itemTemplate.name}
+                  </Text>
+                  <Text my={2} color="gray.500">
+                    {itemTemplate.description}
+                  </Text>
+                </Td>
+                <Td isNumeric>{itemTemplate.mintedCount}</Td>
+                <Td isNumeric>{itemTemplate.limit}</Td>
+                <Td>
+                  <Button size="sm" onClick={() => mint(itemTemplate.id)}>
+                    Mint
+                  </Button>
+                </Td>
+              </Tr>
+            );
           })}
         </Tbody>
       </Table>
-    
-      <Modal size="xl" closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+
+      <Modal
+        size="xl"
+        closeOnOverlayClick={false}
+        isOpen={isOpen}
+        onClose={onClose}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Mint NFT</ModalHeader>
@@ -119,7 +130,12 @@ export const ItemTemplateTable = props => {
           <ModalBody pb={6}>
             <FormControl mt={4}>
               <FormLabel>Amount</FormLabel>
-              <NumberInput value={mintNum} onChange={updateMintNum} max={100} min={1}>
+              <NumberInput
+                value={mintNum}
+                onChange={updateMintNum}
+                max={100}
+                min={1}
+              >
                 <NumberInputField />
                 <NumberInputStepper>
                   <NumberIncrementStepper />
@@ -144,5 +160,6 @@ export const ItemTemplateTable = props => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>)
-}
+    </>
+  );
+};

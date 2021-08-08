@@ -1,12 +1,9 @@
-import { useState, useEffect } from 'react';
-import {
-  Button,
-  Box,
-} from '@chakra-ui/react';
+import React from 'react';
+import { Button, Box } from '@chakra-ui/react';
 import { flow } from '../services/flow';
 
 const SignInOutButton = ({ user }) => {
-  const signInOrOut = event => {
+  const signInOrOut = (event) => {
     event.preventDefault();
 
     if (user.loggedIn) {
@@ -23,15 +20,10 @@ const SignInOutButton = ({ user }) => {
   );
 };
 
-export const ConnectButton = props => {
+export const ConnectButton = (props) => {
   return (
-    <Box
-      position="fixed"
-      top="1rem"
-      right="1rem"
-      color="green"
-    >
+    <Box position="fixed" top="1rem" right="1rem" color="green">
       <SignInOutButton user={props.user} />
     </Box>
-  )
-}
+  );
+};

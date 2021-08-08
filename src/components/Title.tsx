@@ -1,4 +1,5 @@
-import { Flex, Heading } from '@chakra-ui/react'
+import React from 'react';
+import { Flex, Heading } from '@chakra-ui/react';
 
 export const Title = ({ title }) => (
   <Flex justifyContent="center" alignItems="center" height="10vh" m={4}>
@@ -10,8 +11,8 @@ export const Title = ({ title }) => (
       {title}
     </Heading>
   </Flex>
-)
+);
 
 Title.defaultProps = {
-  title: 'Let\'s mint on Flow 🌊',
-}
+  title: "Let's mint on Flow 🌊",
+};

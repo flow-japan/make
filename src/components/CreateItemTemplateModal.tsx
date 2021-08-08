@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import {
   Modal,
@@ -25,27 +25,37 @@ import {
 import { fleek } from '../services/fleek';
 import { flow } from '../services/flow';
 
-export const CreateItemTemplateModal = props => {
-  const [ itemName, setItemName ] = useState('');
-  const [ itemDescription, setItemDescription ] = useState('');
-  const [ itemImageUrl, setItemImageUrl ] = useState('');
-  const [ itemLimit, setItemLimit ] = useState(1);
-  const [ isSending, setIsSending ] = useState(false);
+export const CreateItemTemplateModal = (props) => {
+  const [itemName, setItemName] = useState('');
+  const [itemDescription, setItemDescription] = useState('');
+  const [itemImageUrl, setItemImageUrl] = useState('');
+  const [itemLimit, setItemLimit] = useState(1);
+  const [isSending, setIsSending] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const updateItemName = event => { event.preventDefault(); setItemName(event.target.value); };
-  const updateItemDescription = event => { event.preventDefault(); setItemDescription(event.target.value); };
-  const updateItemLimit = value => { setItemLimit(value); };
+  const updateItemName = (event) => {
+    event.preventDefault();
+    setItemName(event.target.value);
+  };
+  const updateItemDescription = (event) => {
+    event.preventDefault();
+    setItemDescription(event.target.value);
+  };
+  const updateItemLimit = (value) => {
+    setItemLimit(value);
+  };
 
-  const processImage = async event => {
+  const processImage = async (event) => {
     const imageFile = event.target.files[0];
     if (!imageFile) return;
-    const imageData = await (await fetch(URL.createObjectURL(imageFile))).blob();
+    const imageData = await (
+      await fetch(URL.createObjectURL(imageFile))
+    ).blob();
     const ipfsHash = await fleek.upload(imageData, imageFile.name);
     const imageUrl = fleek.getURL(ipfsHash);
     setItemImageUrl(imageUrl);
-  }
-  
+  };
+
   const clearModal = () => {
     onClose();
     setItemName('');
@@ -53,12 +63,17 @@ export const CreateItemTemplateModal = props => {
     setItemImageUrl('');
     setItemLimit(1);
     setIsSending(false);
-  }
+  };
 
   const sendCreateItemTemplateTransaction = async () => {
     setIsSending(true);
     try {
-      const result = await flow.createCollectibleData(itemName, itemDescription, itemImageUrl, itemLimit);
+      const result = await flow.createCollectibleData(
+        itemName,
+        itemDescription,
+        itemImageUrl,
+        itemLimit
+      );
       if (result) {
         console.log(result);
         clearModal();
@@ -69,13 +84,20 @@ export const CreateItemTemplateModal = props => {
     } finally {
       setIsSending(false);
     }
-  }
+  };
 
   return (
     <>
-      <Button m={2} size="sm" onClick={onOpen}>Create Item</Button>
+      <Button m={2} size="sm" onClick={onOpen}>
+        Create Item
+      </Button>
 
-      <Modal size="xl" closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+      <Modal
+        size="xl"
+        closeOnOverlayClick={false}
+        isOpen={isOpen}
+        onClose={onClose}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create Item</ModalHeader>
@@ -89,23 +111,34 @@ export const CreateItemTemplateModal = props => {
 
             <FormControl mt={4}>
               <FormLabel>Description</FormLabel>
-              <Textarea value={itemDescription} onChange={updateItemDescription}></Textarea>
+              <Textarea
+                value={itemDescription}
+                onChange={updateItemDescription}
+              ></Textarea>
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Image</FormLabel>
-              <input type="file" accept="image/*" onChange={processImage}></input>
-              {itemImageUrl ? <Box mt={2}>
-                <Image
-                  src={itemImageUrl}
-                  alt={itemName}
-                />
-              </Box> : null}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={processImage}
+              ></input>
+              {itemImageUrl ? (
+                <Box mt={2}>
+                  <Image src={itemImageUrl} alt={itemName} />
+                </Box>
+              ) : null}
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Limit</FormLabel>
-              <NumberInput value={itemLimit} onChange={updateItemLimit} max={1000000} min={1}>
+              <NumberInput
+                value={itemLimit}
+                onChange={updateItemLimit}
+                max={1000000}
+                min={1}
+              >
                 <NumberInputField />
                 <NumberInputStepper>
                   <NumberIncrementStepper />
@@ -119,7 +152,9 @@ export const CreateItemTemplateModal = props => {
             <Button
               isLoading={isSending}
               onClick={sendCreateItemTemplateTransaction}
-              isDisabled={!itemName || !itemDescription || !itemImageUrl || !itemLimit}
+              isDisabled={
+                !itemName || !itemDescription || !itemImageUrl || !itemLimit
+              }
               spinner={<BeatLoader size={8} color="white" />}
               colorScheme="blue"
               mr={3}
@@ -131,5 +166,5 @@ export const CreateItemTemplateModal = props => {
         </ModalContent>
       </Modal>
     </>
-  )
-}
+  );
+};

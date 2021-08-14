@@ -3,8 +3,10 @@
 flow project deploy
 # flow project deploy -n testnet
 # flow accounts remove-contract Collectible -n testnet --signer testnetAccount1
+# flow accounts remove-contract Showcase -n testnet --signer testnetAccount1
+# flow accounts remove-contract LikeToken -n testnet --signer testnetAccount1
 
-flow transactions send ./cadence/transactions/mint_nfts.cdc \
+flow transactions send ./cadence/transactions/mint_nft.cdc \
   --args-json '[
     {
       "type": "Dictionary",
@@ -27,10 +29,23 @@ flow transactions send ./cadence/transactions/mint_nfts.cdc \
 
 flow scripts execute ./cadence/scripts/get_all_metadata.cdc --arg Address:f8d6e0586b0a20c7
 
-flow transactions send ./cadence/transactions/list_nft.cdc \
-  --arg UInt64:1
+flow transactions send ./cadence/transactions/deposit_nft.cdc --arg UInt64:1
 
 flow scripts execute ./cadence/scripts/get_showcase_all_metadata.cdc
+
+flow transactions send ./cadence/transactions/like_nft.cdc --arg UInt64:1
+
+flow accounts create --key cd7c5c71cd5f2ee8e444ce5604d7cfeabefda02045e9bd0febce8a4d39930d5fbfade027b29759f5bac7643e22b864012afc38744dc30bc4a452677b9b84956a
+flow transactions send ./cadence/transactions/like_nft.cdc --arg UInt64:1 --signer account1
+
+flow scripts execute ./cadence/scripts/get_showcase_all_metadata.cdc
+
+
+flow transactions send ./cadence/transactions/update_pause.cdc --arg Bool:true
+flow transactions send ./cadence/transactions/update_pause.cdc --arg Bool:false
+# # Fail
+# flow transactions send ./cadence/transactions/update_pause.cdc --arg Bool:true --signer account1
+
 
 ###################
 ## テストネットのコントラクト

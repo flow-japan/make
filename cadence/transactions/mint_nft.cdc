@@ -14,13 +14,13 @@ transaction(metadata: {String: String}) {
             acct.save(<- Collectible.createMinter(), to: Collectible.MinterStoragePath)
         }
 
-        // Mint and Deposit NFTs
+        // Mint and Deposit NFT
         let minter = acct.borrow<&Collectible.Minter>(from: Collectible.MinterStoragePath)!
         let receiverRef = acct.getCapability(Collectible.CollectionPublicPath).borrow<&{Collectible.CollectibleCollectionPublic}>()
             ?? panic("Cannot borrow a reference to the recipient's Replica collection")
         let token <- minter.mintNFT(metadata: metadata)
         receiverRef.deposit(token: <- token)
 
-        log("Mint NFTs succeeded")
+        log("Mint NFT succeeded")
     }
 }

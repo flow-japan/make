@@ -1,57 +1,81 @@
-// import NonFungibleToken from "./NonFungibleToken.cdc"
-// import Collectible from "./Collectible.cdc"
-import NonFungibleToken from 0x631e88ae7f1d7c20 // Testnet
-import Collectible from 0x85875109cfe22e4a // Testnet
+import Collectible from "./Collectible.cdc"
 
 pub contract Showcase {
+    pub event Deposit(id: UInt64, tokenId: UInt64, from: Address)
+    pub event Withdraw(id: UInt64)
+    pub event UpdatePause(isPaused: Bool)
+
+    pub let AdminStoragePath: StoragePath
+
     pub var items: @{UInt64: Item}
+    pub var itemIdCount: UInt64
+    pub var isPaused: Bool
 
     pub resource Item {
         pub let ownerAddress: Address
-        pub let tokenID: UInt64
+        pub let token: @{String: Collectible.NFT}
 
-        init(ownerAddress: Address, tokenID: UInt64) {
+        init(ownerAddress: Address, token: @Collectible.NFT) {
             self.ownerAddress = ownerAddress
-            self.tokenID = tokenID
+            self.token <- {}
+            self.token["token"] <-! token
+        }
+
+        pub fun borrowNFT(): &Collectible.NFT {
+            return &self.token["token"] as &Collectible.NFT
+        }
+
+        destroy() {
+            destroy self.token
         }
     }
 
-    pub fun list(collectionCapability: &AnyResource{Collectible.CollectibleCollectionPublic}, tokenID: UInt64, ownerAddress: Address) {
-        pre {
-            collectionCapability.borrowNFT(id: tokenID) != nil: "NFT does not exist in the collection!"
-            collectionCapability.borrowNFT(id: tokenID).owner?.address == ownerAddress: "ownerAddress is wrong!"
+    pub fun deposit(token: @Collectible.NFT, ownerAddress: Address) {
+        if Showcase.isPaused {
+            panic("Showcase is paused")
         }
-        let oldData <- self.items[tokenID] <- create Item(ownerAddress: ownerAddress, tokenID: tokenID)
-        destroy oldData
+        self.itemIdCount = self.itemIdCount + 1 as UInt64
+        emit Deposit(id: self.itemIdCount, tokenId: token.id, from: ownerAddress)
+        self.items[self.itemIdCount] <-! create Item(ownerAddress: ownerAddress, token: <- token)
     }
 
-    pub fun delist(tokenID: UInt64) {
-        // TODO: リストした人以外はデリストできないようにする
-        let oldData <-! self.items.remove(key: tokenID)
-        destroy oldData
+    pub fun withdraw(itemId: UInt64): @Collectible.NFT {
+        // MEMO: 誰でも withdraw できることに注意
+        if Showcase.isPaused {
+            panic("Showcase is paused")
+        }
+        let item <- self.items.remove(key: itemId)!
+        let token <- item.token.remove(key: "token")!
+        destroy item
+        emit Withdraw(id: self.itemIdCount)
+        return <- token
     }
 
-    pub fun getAllMetadata(): {UInt64: {String: String}} {
-        // TODO: NFT最大何個までいけるか要確認
-        var metadataArray: {UInt64: {String: String}} = {}
-        for tokenID in self.items.keys {
-            let item <-! self.items.remove(key: tokenID)!
-            let collection = getAccount(item.ownerAddress).getCapability<&{Collectible.CollectibleCollectionPublic}>(Collectible.CollectionPublicPath).borrow()!
-            let token = collection.borrowCollectible(id: tokenID)
-            let metadata = token.metadata
-            metadataArray[tokenID] = {
-                "tokenID": item.tokenID.toString(),
-                "ownerAddress": item.ownerAddress.toString(),
-                "name": metadata["name"]!,
-                "description": metadata["description"]!,
-                "image": metadata["image"]!
-            }
-            self.items[tokenID] <-! item
+    pub fun getIDs(): [UInt64] {
+        return self.items.keys
+    }
+
+    pub fun borrowItem(itemId: UInt64): &Showcase.Item {
+        return &self.items[itemId] as &Showcase.Item
+    }
+
+    pub resource Admin {
+        pub fun pause() {
+            Showcase.isPaused = true
+            emit UpdatePause(isPaused: true)
         }
-        return metadataArray
+
+        pub fun unpause() {
+            Showcase.isPaused = false
+            emit UpdatePause(isPaused: false)
+        }
     }
 
     init() {
+        self.AdminStoragePath = /storage/ShowcaseAdmin000
+        self.account.save<@Admin>(<- create Admin(), to: self.AdminStoragePath)
         self.items <- {}
+        self.itemIdCount = 0
+        self.isPaused = false
     }
 }

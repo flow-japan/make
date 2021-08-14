@@ -1,12 +1,10 @@
 // import NonFungibleToken from "./NonFungibleToken.cdc"
 import NonFungibleToken from 0x631e88ae7f1d7c20 // Testnet
-import LikeToken from "./LikeToken.cdc"
 
-pub contract Collectible: NonFungibleToken {
+pub contract LikeToken: NonFungibleToken {
     pub event ContractInitialized()
     pub event Withdraw(id: UInt64, from: Address?)
     pub event Deposit(id: UInt64, to: Address?)
-    pub event Like(id: UInt64, from: Address)
 
     pub let CollectionStoragePath: StoragePath
     pub let CollectionPublicPath: PublicPath
@@ -16,43 +14,30 @@ pub contract Collectible: NonFungibleToken {
 
     pub resource NFT: NonFungibleToken.INFT {
         pub let id: UInt64
-        pub let metadata: {String: String}
-        pub var likes: @{Address: LikeToken.NFT}
+        pub let minter: Address
 
-        init(metadata: {String: String}) {
-            Collectible.totalSupply = Collectible.totalSupply + 1 as UInt64
-            self.id = Collectible.totalSupply
-            self.metadata = metadata
-            self.likes <- {}
-        }
-
-        pub fun like(likeToken: @LikeToken.NFT) {
-            emit Like(id: self.id, from: likeToken.minter)
-            let oldLikeToken <- self.likes[likeToken.minter] <- likeToken
-            destroy oldLikeToken
-        }
-
-        destroy() {
-            destroy self.likes
+        init(minter: Address) {
+            LikeToken.totalSupply = LikeToken.totalSupply + 1 as UInt64
+            self.id = LikeToken.totalSupply
+            self.minter = minter
         }
     }
 
     pub resource Minter {
-        pub fun mintNFT(metadata: {String: String}): @NFT {
-            return <- create NFT(metadata: metadata)
+        pub fun mintNFT(): @NFT {
+            return <- create NFT(minter: self.owner!.address)
         }
     }
 
-    pub resource interface CollectibleCollectionPublic {
+    pub resource interface LikeCollectionPublic {
         pub fun deposit(token: @NonFungibleToken.NFT)
         pub fun batchDeposit(tokens: @NonFungibleToken.Collection)
-        pub fun like(id: UInt64, likeToken: @LikeToken.NFT)
         pub fun getIDs(): [UInt64]
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT
-        pub fun borrowCollectible(id: UInt64): &Collectible.NFT
+        pub fun borrowLike(id: UInt64): &LikeToken.NFT
     }
 
-    pub resource Collection: CollectibleCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic {
+    pub resource Collection: LikeCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic {
         pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
 
         init() {
@@ -60,7 +45,7 @@ pub contract Collectible: NonFungibleToken {
         }
 
         pub fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT {
-            let token <- self.ownedNFTs.remove(key: withdrawID) ?? panic("Cannot withdraw: Collectible does not exist in the collection.")
+            let token <- self.ownedNFTs.remove(key: withdrawID) ?? panic("Cannot withdraw: LikeToken does not exist in the collection.")
             emit Withdraw(id: token.id, from: self.owner?.address)
             return <- token
         }
@@ -68,13 +53,13 @@ pub contract Collectible: NonFungibleToken {
         pub fun batchWithdraw(ids: [UInt64]): @NonFungibleToken.Collection {
             let batchCollection <- create Collection()
             for id in ids {
-                batchCollection.deposit(token: <-self.withdraw(withdrawID: id))
+                batchCollection.deposit(token: <- self.withdraw(withdrawID: id))
             }
             return <- batchCollection
         }
 
         pub fun deposit(token: @NonFungibleToken.NFT) {
-            let token <- token as! @Collectible.NFT
+            let token <- token as! @LikeToken.NFT
             if self.owner?.address != nil {
                 emit Deposit(id: token.id, to: self.owner?.address)
             }
@@ -88,10 +73,6 @@ pub contract Collectible: NonFungibleToken {
             destroy tokens
         }
 
-        pub fun like(id: UInt64, likeToken: @LikeToken.NFT) {
-            self.borrowCollectible(id: id).like(likeToken: <- likeToken)
-        }
-
         pub fun getIDs(): [UInt64] {
             return self.ownedNFTs.keys
         }
@@ -100,9 +81,9 @@ pub contract Collectible: NonFungibleToken {
             return &self.ownedNFTs[id] as &NonFungibleToken.NFT
         }
 
-        pub fun borrowCollectible(id: UInt64): &Collectible.NFT {
+        pub fun borrowLike(id: UInt64): &LikeToken.NFT {
             let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-            return ref as! &Collectible.NFT
+            return ref as! &LikeToken.NFT
         }
 
         destroy() {
@@ -115,17 +96,17 @@ pub contract Collectible: NonFungibleToken {
     }
 
     pub fun createEmptyCollection(): @NonFungibleToken.Collection {
-        return <- create Collectible.Collection()
+        return <- create LikeToken.Collection()
     }
 
     init() {
-        self.CollectionStoragePath = /storage/CollectibleCollection002
-        self.CollectionPublicPath = /public/CollectibleCollection002
-        self.MinterStoragePath = /storage/CollectibleMinter002
+        self.CollectionStoragePath = /storage/LikeCollection000
+        self.CollectionPublicPath = /public/LikeCollection000
+        self.MinterStoragePath = /storage/LikeMinter000
 
         self.totalSupply = 0
         self.account.save<@Collection>(<- create Collection(), to: self.CollectionStoragePath)
-        self.account.link<&{CollectibleCollectionPublic}>(self.CollectionPublicPath, target: self.CollectionStoragePath)
+        self.account.link<&{LikeCollectionPublic}>(self.CollectionPublicPath, target: self.CollectionStoragePath)
         emit ContractInitialized()
     }
 }

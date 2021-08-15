@@ -1,3 +1,5 @@
-# Inscribe
+# Make
 
-## Demo
+
+## Live Demo
+https://make-nft.vercel.app/

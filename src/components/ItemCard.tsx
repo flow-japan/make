@@ -1,75 +1,268 @@
-import React from 'react';
+import React, { useState } from 'react';
+import BeatLoader from 'react-spinners/BeatLoader';
 import {
   Box,
-  useColorModeValue,
-  Heading,
+  AspectRatio,
   Text,
-  Stack,
   Image,
+  IconButton,
+  Button,
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Input,
+  Link,
+  ModalFooter,
+  useToast,
+  useDisclosure,
 } from '@chakra-ui/react';
+import { FaHeart } from 'react-icons/fa';
+import { FiHeart } from 'react-icons/fi';
+import { Formik, Field, Form } from 'formik';
+import { flow } from '../services/flow';
+import axios from 'axios';
 
 export const ItemCard = (props) => {
-  const { id, name, description, image } = props.item;
+  const toast = useToast();
+  const [itemIdForReport, setItemIdForReport] = useState();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const {
+    itemId,
+    tokenId,
+    name,
+    description,
+    image,
+    ownerAddress,
+    likedAddresses,
+  } = props.item;
+  const id = tokenId;
+  const likedAddressesArray =
+    likedAddresses === '' ? [] : likedAddresses.split(',');
+  const myAddress = props.myAddress;
+
+  const showToast = (transactionId) => {
+    toast({
+      title: 'トランザクションが送信されました',
+      description: (
+        <Link
+          href={`https://flow-view-source.com/testnet/tx/${transactionId}`}
+          isExternal
+        >
+          Flow View Source で見る
+        </Link>
+      ),
+      status: 'success',
+      duration: null, // 9000
+      isClosable: true,
+    });
+  };
+
+  const sendLikeNFTTransaction = async (itemId) => {
+    try {
+      const responce = await flow.likeNFT(itemId);
+      showToast(responce.transactionId);
+      const result = await flow.awaitSealed(responce);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const sendWithdrawNFTTransaction = async (itemId) => {
+    try {
+      const responce = await flow.withdrawNFT(itemId);
+      showToast(responce.transactionId);
+      const result = await flow.awaitSealed(responce);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleReport = (itemId) => {
+    setItemIdForReport(itemId);
+    onOpen();
+  };
+
+  const reportMessage = async (values, actions) => {
+    const message = values.message;
+    await axios.post('/api/report', { message, itemId: itemIdForReport });
+    actions.setSubmitting(false);
+    alert('報告ありがとうございます！');
+    onClose();
+  };
+
   return (
     <Box
-      role={'group'}
-      p={6}
-      maxW={'380px'}
-      maxH={'600px'}
-      w={'full'}
-      bg={useColorModeValue('white', 'gray.800')}
-      pos={'relative'}
-      zIndex={1}
+      maxWidth="300px"
+      borderWidth="1px"
+      borderRadius="lg"
+      overflow="hidden"
+      boxShadow="lg"
     >
-      <Box
-        rounded={'lg'}
-        mt={-12}
-        pos={'relative'}
-        height={'180px'}
-        _after={{
-          transition: 'all .3s ease',
-          content: '""',
-          w: 'full',
-          h: 'full',
-          pos: 'absolute',
-          top: 5,
-          left: 0,
-          backgroundImage: `url(${image})`,
-          filter: 'blur(15px)',
-          zIndex: -1,
-        }}
-        _groupHover={{
-          _after: {
-            filter: 'blur(20px)',
-          },
-        }}
-      >
-        <Image
-          rounded={'lg'}
-          height={180}
-          width={342}
-          objectFit={'cover'}
-          src={image}
-        />
-      </Box>
-      <Stack pt={10} align={'center'}>
-        <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-          #{id}
-        </Text>
-        <Heading
-          fontSize={'2xl'}
-          fontFamily={'body'}
-          fontWeight={500}
-          noOfLines={3}
+      <AspectRatio ratio={1}>
+        <Box
+          pos={'relative'}
+          _after={{
+            transition: 'all .2s ease',
+            content: '""',
+            w: 'full',
+            h: 'full',
+            pos: 'absolute',
+            top: 3,
+            left: 0,
+            backgroundImage: `url(${image})`,
+            filter: 'blur(15px)',
+            zIndex: -1,
+          }}
+          _groupHover={{
+            _after: {
+              filter: 'blur(20px)',
+            },
+          }}
+        >
+          <Image objectFit={'cover'} src={image} boxShadow="lg" />
+        </Box>
+      </AspectRatio>
+
+      <Box p="5" pr="4">
+        <Box d="flex" alignItems="baseline" justifyContent="space-between">
+          <Box
+            color="gray.500"
+            fontWeight="semibold"
+            letterSpacing="wide"
+            fontSize="xs"
+            textTransform="uppercase"
+          >
+            #{id}
+          </Box>
+
+          <Box alignItems="center" alignSelf="start">
+            <IconButton
+              icon={
+                likedAddressesArray.includes(myAddress) ? (
+                  <FaHeart />
+                ) : (
+                  <FiHeart />
+                )
+              }
+              color={likedAddressesArray.includes(myAddress) ? 'red' : 'black'}
+              aria-label="Like"
+              variant="link"
+              onClick={
+                !likedAddressesArray.includes(myAddress)
+                  ? () => sendLikeNFTTransaction(itemId)
+                  : () => alert('Already Liked. Thank you.')
+              }
+            />
+            <Box as="span" ml="1" color="gray.600" fontSize="sm">
+              {likedAddressesArray.length}
+            </Box>
+          </Box>
+        </Box>
+
+        <Box
+          mt="1"
+          fontWeight="semibold"
+          as="h4"
+          lineHeight="tight"
+          isTruncated
         >
           {name}
-        </Heading>
-        <Stack direction={'row'} align={'center'}>
+        </Box>
+
+        <Box mt="1">
           <Text color={'gray.600'} noOfLines={4} fontSize="sm">
             {description}
           </Text>
-        </Stack>
-      </Stack>
+        </Box>
+
+        {ownerAddress === myAddress ? (
+          <Box mt="2" ml="-2">
+            <Button
+              size="xs"
+              colorScheme="blackAlpha"
+              onClick={() => sendWithdrawNFTTransaction(itemId)}
+            >
+              引き取る
+            </Button>
+          </Box>
+        ) : null}
+
+        <Box mt="1">
+          <Button
+            size="xs"
+            fontWeight="lighter"
+            variant="link"
+            onClick={() => handleReport(itemId)}
+          >
+            通報する
+          </Button>
+        </Box>
+      </Box>
+
+      <Modal
+        size="xl"
+        isCentered
+        closeOnOverlayClick={false}
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>通報する</ModalHeader>
+          <ModalCloseButton />
+
+          <Formik initialValues={{ message: '' }} onSubmit={reportMessage}>
+            {(props) => (
+              <Form>
+                <ModalBody pb={6}>
+                  <Field name="message">
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={form.errors.message && form.touched.message}
+                      >
+                        <FormLabel htmlFor="message">
+                          この NFT
+                          の画像・文章に問題がある場合はお知らせください。
+                        </FormLabel>
+                        <Input
+                          {...field}
+                          id="message"
+                          placeholder="メッセージ（任意）"
+                        />
+                        <FormErrorMessage>
+                          {form.errors.message}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                </ModalBody>
+
+                <ModalFooter>
+                  <Button
+                    mr={3}
+                    isLoading={props.isSubmitting}
+                    spinner={<BeatLoader size={8} color="white" />}
+                    colorScheme="blue"
+                    type="submit"
+                  >
+                    送信
+                  </Button>
+                  <Button onClick={onClose}>キャンセル</Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

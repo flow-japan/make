@@ -7,17 +7,22 @@ import {
   FormLabel,
   Input,
   Box,
+  Link,
   Textarea,
-  Image,
+  Spinner,
+  useToast,
 } from '@chakra-ui/react';
+import { Img } from 'react-image';
 import { fleek } from '../services/fleek';
 import { flow } from '../services/flow';
 
 export const Create = () => {
+  const toast = useToast();
   const [itemName, setItemName] = useState('');
   const [itemDescription, setItemDescription] = useState('');
   const [itemImageUrl, setItemImageUrl] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [isProcessingImage, setProcessingImage] = useState(false);
 
   const updateItemName = (event) => {
     event.preventDefault();
@@ -29,14 +34,19 @@ export const Create = () => {
   };
 
   const processImage = async (event) => {
-    const imageFile = event.target.files[0];
-    if (!imageFile) return;
-    const imageData = await (
-      await fetch(URL.createObjectURL(imageFile))
-    ).blob();
-    const ipfsHash = await fleek.upload(imageData, imageFile.name);
-    const imageUrl = fleek.getURL(ipfsHash);
-    setItemImageUrl(imageUrl);
+    try {
+      setProcessingImage(true);
+      const imageFile = event.target.files[0];
+      if (!imageFile) return;
+      const imageData = await (
+        await fetch(URL.createObjectURL(imageFile))
+      ).blob();
+      const ipfsHash = await fleek.upload(imageData, imageFile.name);
+      const imageUrl = fleek.getURL(ipfsHash);
+      setItemImageUrl(imageUrl);
+    } finally {
+      setProcessingImage(false);
+    }
   };
 
   const clearForm = () => {
@@ -48,11 +58,26 @@ export const Create = () => {
   const sendMintNFTTransaction = async () => {
     setIsSending(true);
     try {
-      const result = await flow.mintNFT(
+      const responce = await flow.mintNFT(
         itemName,
         itemDescription,
         itemImageUrl
       );
+      toast({
+        title: 'トランザクションが送信されました',
+        description: (
+          <Link
+            href={`https://flow-view-source.com/testnet/tx/${responce.transactionId}`}
+            isExternal
+          >
+            Flow View Source で見る
+          </Link>
+        ),
+        status: 'success',
+        duration: null, // 9000
+        isClosable: true,
+      });
+      const result = await flow.awaitSealed(responce);
       console.log(result);
       clearForm();
     } catch (e) {
@@ -84,7 +109,11 @@ export const Create = () => {
             <input type="file" accept="image/*" onChange={processImage}></input>
             {itemImageUrl ? (
               <Box mt={2}>
-                <Image src={itemImageUrl} alt={itemName} />
+                <Img src={itemImageUrl} alt={itemName} loader={<Spinner />} />
+              </Box>
+            ) : isProcessingImage ? (
+              <Box mt={2}>
+                <Spinner />
               </Box>
             ) : null}
           </FormControl>

@@ -14,7 +14,7 @@ export const ViewCollection = () => {
 
   return (
     <>
-      <Button m={2} size="sm" onClick={updateNftsData}>
+      <Button size="sm" mt="2" mb="4" onClick={updateNftsData}>
         {!nftsData ? 'みる' : <RepeatIcon />}
       </Button>
       <ItemTable items={nftsData} />

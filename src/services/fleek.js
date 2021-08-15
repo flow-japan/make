@@ -1,8 +1,7 @@
-import fleekStorage from '@fleekhq/fleek-storage-js'
+import fleekStorage from '@fleekhq/fleek-storage-js';
 
 class FleekService {
   async upload(imageData, fileName) {
-    console.log(process.env.NEXT_PUBLIC_FLEEK_API_KEY)
     const result = await fleekStorage.upload({
       apiKey: process.env.NEXT_PUBLIC_FLEEK_API_KEY,
       apiSecret: process.env.NEXT_PUBLIC_FLEEK_API_SECRET,

@@ -7,6 +7,7 @@
 	},
 	"contracts": {
 		"NonFungibleToken": "./cadence/contracts/NonFungibleToken.cdc",
+		"LikeToken": "./cadence/contracts/LikeToken.cdc",
 		"Collectible": "./cadence/contracts/Collectible.cdc",
 		"Showcase": "./cadence/contracts/Showcase.cdc"
 	},
@@ -22,7 +23,7 @@
 		},
 		"account1": {
 			"address": "01cf0e2f2f715450",
-			"keys": "adf150aed3c24c1e8ad8cf1277060e8164fe58a6f8aeb1db92e6cc0c54e3b83e"
+			"keys": "0d7f6d0208611e611ab01634ad7a1c7e661df770ea6fdf7b4a3866e5a786530b"
 		},
 		"testnetAccount1": {
 			"address": "85875109cfe22e4a",
@@ -31,10 +32,10 @@
 	},
 	"deployments": {
 		"emulator": {
-			"emulator-account": ["NonFungibleToken", "Collectible", "Showcase"]
+			"emulator-account": ["NonFungibleToken", "LikeToken", "Collectible", "Showcase"]
 		},
 		"testnet": {
-			"testnetAccount1": ["Collectible", "Showcase"]
+			"testnetAccount1": ["LikeToken", "Collectible", "Showcase"]
 		}
 	}
 }

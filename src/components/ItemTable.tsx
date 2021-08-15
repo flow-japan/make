@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import {
+  Container,
+  Alert,
   Text,
   Button,
   Table,
@@ -10,6 +12,7 @@ import {
   Th,
   Td,
   Image,
+  Link,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -17,32 +20,38 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  FormControl,
-  FormLabel,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { flow } from '../services/flow';
 
 export const ItemTable = (props) => {
+  const toast = useToast();
   const [isSending, setIsSending] = useState(false);
-  const [collectibleDataId, setCollectibleDataId] = useState(null);
-  const [mintNum, setMintNum] = useState(1);
+  const [tokenId, setTokenId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const updateMintNum = (value) => {
-    setMintNum(value);
-  };
-
-  const sendMintTransaction = async () => {
+  const sendDepositNFTTransaction = async () => {
     setIsSending(true);
     try {
-      const result = await flow.mintNFT(collectibleDataId, mintNum);
+      const responce = await flow.depositNFT(tokenId);
+      toast({
+        title: 'トランザクションが送信されました',
+        description: (
+          <Link
+            href={`https://flow-view-source.com/testnet/tx/${responce.transactionId}`}
+            isExternal
+          >
+            Flow View Source で見る
+          </Link>
+        ),
+        status: 'success',
+        duration: null, // 9000
+        isClosable: true,
+      });
+      const result = await flow.awaitSealed(responce);
       console.log(result);
+      onClose();
     } catch (e) {
       console.log(e);
     } finally {
@@ -50,13 +59,18 @@ export const ItemTable = (props) => {
     }
   };
 
-  const mint = (id) => {
-    console.log('mint', id);
-    setCollectibleDataId(id);
+  const depositToShowcase = (id) => {
+    setTokenId(id);
     onOpen();
   };
 
-  return !props.items ? null : (
+  return !props.items ? (
+    <></>
+  ) : props.items.length === 0 ? (
+    <Alert status="info" colorScheme="gray.50">
+      持っている NFT はありません。「発行」タブから NFT を発行してみましょう！
+    </Alert>
+  ) : (
     <>
       <Table colorScheme="teal">
         <Thead>
@@ -103,8 +117,8 @@ export const ItemTable = (props) => {
                   </Text>
                 </Td>
                 <Td>
-                  <Button size="sm" onClick={() => mint(item.id)}>
-                    みんなにみせる
+                  <Button size="sm" onClick={() => depositToShowcase(item.id)}>
+                    展示する
                   </Button>
                 </Td>
               </Tr>
@@ -115,45 +129,33 @@ export const ItemTable = (props) => {
 
       <Modal
         size="xl"
+        isCentered
         closeOnOverlayClick={false}
         isOpen={isOpen}
         onClose={onClose}
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Mint NFT</ModalHeader>
+          <ModalHeader>展示する</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody pb={6}>
-            <FormControl mt={4}>
-              <FormLabel>Amount</FormLabel>
-              <NumberInput
-                value={mintNum}
-                onChange={updateMintNum}
-                max={100}
-                min={1}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </FormControl>
+            <Text>
+              展示すると「自分のNFT」から消えて「みんなのNFT」に表示されます。
+            </Text>
           </ModalBody>
 
           <ModalFooter>
             <Button
               isLoading={isSending}
-              onClick={sendMintTransaction}
-              isDisabled={!mintNum}
+              onClick={sendDepositNFTTransaction}
               spinner={<BeatLoader size={8} color="white" />}
               colorScheme="blue"
               mr={3}
             >
-              Send
+              OK
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>キャンセル</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

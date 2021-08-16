@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import {
-  Container,
   Alert,
   Text,
   Button,
@@ -23,10 +22,12 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
+import { useTranslation } from 'next-i18next';
 import { flow } from '../services/flow';
 
 export const ItemTable = (props) => {
   const toast = useToast();
+  const { t } = useTranslation('common');
   const [isSending, setIsSending] = useState(false);
   const [tokenId, setTokenId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -36,13 +37,13 @@ export const ItemTable = (props) => {
     try {
       const responce = await flow.depositNFT(tokenId);
       toast({
-        title: 'トランザクションが送信されました',
+        title: t('tx-sent'),
         description: (
           <Link
             href={`https://flow-view-source.com/testnet/tx/${responce.transactionId}`}
             isExternal
           >
-            Flow View Source で見る
+            {t('view-on-flow-view-source')}
           </Link>
         ),
         status: 'success',
@@ -68,18 +69,18 @@ export const ItemTable = (props) => {
     <></>
   ) : props.items.length === 0 ? (
     <Alert status="info" colorScheme="gray.50">
-      持っている NFT はありません。「発行」タブから NFT を発行してみましょう！
+      {t('no-my-nft-message')}
     </Alert>
   ) : (
     <>
       <Table colorScheme="teal">
         <Thead>
           <Tr>
-            <Th>ID</Th>
-            <Th>画像</Th>
-            <Th>名前</Th>
-            <Th>説明</Th>
-            <Th>アクション</Th>
+            <Th>{t('metadata-id')}</Th>
+            <Th>{t('metadata-image')}</Th>
+            <Th>{t('metadata-name')}</Th>
+            <Th>{t('metadata-description')}</Th>
+            <Th>{t('action')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -118,7 +119,7 @@ export const ItemTable = (props) => {
                 </Td>
                 <Td>
                   <Button size="sm" onClick={() => depositToShowcase(item.id)}>
-                    展示する
+                    {t('display')}
                   </Button>
                 </Td>
               </Tr>
@@ -136,13 +137,11 @@ export const ItemTable = (props) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>展示する</ModalHeader>
+          <ModalHeader>{t('display')}</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody pb={6}>
-            <Text>
-              展示すると「自分のNFT」から消えて「みんなのNFT」に表示されます。
-            </Text>
+            <Text>{t('display-notification-message')}</Text>
           </ModalBody>
 
           <ModalFooter>
@@ -153,9 +152,9 @@ export const ItemTable = (props) => {
               colorScheme="blue"
               mr={3}
             >
-              OK
+              {t('button.ok')}
             </Button>
-            <Button onClick={onClose}>キャンセル</Button>
+            <Button onClick={onClose}>{t('button.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

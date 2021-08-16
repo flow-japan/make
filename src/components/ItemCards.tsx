@@ -1,13 +1,16 @@
 import React from 'react';
-import { Alert, Container, SimpleGrid } from '@chakra-ui/react';
+import { Alert, SimpleGrid } from '@chakra-ui/react';
+import { useTranslation } from 'next-i18next';
 import { ItemCard } from './ItemCard';
 
 export const ItemCards = (props) => {
+  const { t } = useTranslation('common');
+
   return !props.items ? (
     <></>
   ) : props.items.length === 0 ? (
     <Alert status="info" colorScheme="gray.50">
-      展示されている NFT はありません。
+      {t('no-showcase-nft-message')}
     </Alert>
   ) : (
     <SimpleGrid minChildWidth="160px" spacing="15px">

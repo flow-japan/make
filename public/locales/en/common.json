@@ -1,0 +1,29 @@
+{
+    "showcase-nfts": "Showcase",
+    "my-nfts": "My Collection",
+    "publish": "Make!",
+    "metadata-id": "ID",
+    "metadata-name": "Name",
+    "metadata-description": "Description",
+    "metadata-image": "Image",
+    "action": "Action",
+    "display": "Display",
+    "report": "Report",
+    "tx-sent": "Transaction has been sent.",
+    "view-on-flow-view-source": "View in FlowViewSource",
+    "no-my-nft-message": "You do not have any NFTs. Let's try to make an NFT from \"Make!\" tab!",
+    "no-showcase-nft-message": "There are no NFTs on display.",
+    "message-input-placeholder": "Message (optional)",
+    "report-message": "Please let us know if there is any problems with the image or text in this NFT.",
+    "thank-you-for-reporting-message": "Thank you for the report!",
+    "display-notification-message": "When the NFT is displayed, it will disappear from \"My Collection\" and appear in \"Showcase\".",
+    "button": {
+        "view": "View",
+        "withdraw": "Withdraw",
+        "report": "Report",
+        "publish": "Make!",
+        "send": "Send",
+        "ok": "OK",
+        "cancel": "Cancel"
+    }
+}

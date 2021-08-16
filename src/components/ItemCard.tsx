@@ -24,12 +24,14 @@ import {
 } from '@chakra-ui/react';
 import { FaHeart } from 'react-icons/fa';
 import { FiHeart } from 'react-icons/fi';
+import { useTranslation } from 'next-i18next';
 import { Formik, Field, Form } from 'formik';
 import { flow } from '../services/flow';
 import axios from 'axios';
 
 export const ItemCard = (props) => {
   const toast = useToast();
+  const { t } = useTranslation('common');
   const [itemIdForReport, setItemIdForReport] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -49,13 +51,13 @@ export const ItemCard = (props) => {
 
   const showToast = (transactionId) => {
     toast({
-      title: 'トランザクションが送信されました',
+      title: t('tx-sent'),
       description: (
         <Link
           href={`https://flow-view-source.com/testnet/tx/${transactionId}`}
           isExternal
         >
-          Flow View Source で見る
+          {t('view-on-flow-view-source')}
         </Link>
       ),
       status: 'success',
@@ -95,7 +97,7 @@ export const ItemCard = (props) => {
     const message = values.message;
     await axios.post('/api/report', { message, itemId: itemIdForReport });
     actions.setSubmitting(false);
-    alert('報告ありがとうございます！');
+    alert(t('thank-you-for-reporting-message'));
     onClose();
   };
 
@@ -191,7 +193,7 @@ export const ItemCard = (props) => {
               colorScheme="blackAlpha"
               onClick={() => sendWithdrawNFTTransaction(itemId)}
             >
-              引き取る
+              {t('button.withdraw')}
             </Button>
           </Box>
         ) : null}
@@ -203,7 +205,7 @@ export const ItemCard = (props) => {
             variant="link"
             onClick={() => handleReport(itemId)}
           >
-            通報する
+            {t('button.report')}
           </Button>
         </Box>
       </Box>
@@ -217,7 +219,7 @@ export const ItemCard = (props) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>通報する</ModalHeader>
+          <ModalHeader>{t('report')}</ModalHeader>
           <ModalCloseButton />
 
           <Formik initialValues={{ message: '' }} onSubmit={reportMessage}>
@@ -230,13 +232,12 @@ export const ItemCard = (props) => {
                         isInvalid={form.errors.message && form.touched.message}
                       >
                         <FormLabel htmlFor="message">
-                          この NFT
-                          の画像・文章に問題がある場合はお知らせください。
+                          {t('report-message')}
                         </FormLabel>
                         <Input
                           {...field}
                           id="message"
-                          placeholder="メッセージ（任意）"
+                          placeholder={t('message-input-placeholder')}
                         />
                         <FormErrorMessage>
                           {form.errors.message}
@@ -254,9 +255,9 @@ export const ItemCard = (props) => {
                     colorScheme="blue"
                     type="submit"
                   >
-                    送信
+                    {t('button.send')}
                   </Button>
-                  <Button onClick={onClose}>キャンセル</Button>
+                  <Button onClick={onClose}>{t('button.cancel')}</Button>
                 </ModalFooter>
               </Form>
             )}

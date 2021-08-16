@@ -13,11 +13,13 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { Img } from 'react-image';
+import { useTranslation } from 'next-i18next';
 import { fleek } from '../services/fleek';
 import { flow } from '../services/flow';
 
 export const Create = () => {
   const toast = useToast();
+  const { t } = useTranslation('common');
   const [itemName, setItemName] = useState('');
   const [itemDescription, setItemDescription] = useState('');
   const [itemImageUrl, setItemImageUrl] = useState('');
@@ -64,13 +66,13 @@ export const Create = () => {
         itemImageUrl
       );
       toast({
-        title: 'トランザクションが送信されました',
+        title: t('tx-sent'),
         description: (
           <Link
             href={`https://flow-view-source.com/testnet/tx/${responce.transactionId}`}
             isExternal
           >
-            Flow View Source で見る
+            {t('view-on-flow-view-source')}
           </Link>
         ),
         status: 'success',
@@ -92,12 +94,12 @@ export const Create = () => {
       <Center>
         <Box width="600px" m={4}>
           <FormControl>
-            <FormLabel>名前</FormLabel>
+            <FormLabel>{t('metadata-name')}</FormLabel>
             <Input value={itemName} onChange={updateItemName} />
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>説明</FormLabel>
+            <FormLabel>{t('metadata-description')}</FormLabel>
             <Textarea
               value={itemDescription}
               onChange={updateItemDescription}
@@ -105,7 +107,7 @@ export const Create = () => {
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>画像</FormLabel>
+            <FormLabel>{t('metadata-image')}</FormLabel>
             <input type="file" accept="image/*" onChange={processImage}></input>
             {itemImageUrl ? (
               <Box mt={2}>
@@ -128,7 +130,7 @@ export const Create = () => {
             colorScheme="blue"
             mr={3}
           >
-            発行
+            {t('button.publish')}
           </Button>
         </Box>
       </Center>

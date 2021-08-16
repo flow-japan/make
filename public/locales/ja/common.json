@@ -1,0 +1,29 @@
+{
+    "showcase-nfts": "みんなのNFT",
+    "my-nfts": "自分のNFT",
+    "publish": "発行",
+    "metadata-id": "ID",
+    "metadata-name": "名前",
+    "metadata-description": "説明",
+    "metadata-image": "画像",
+    "action": "アクション",
+    "display": "展示する",
+    "report": "通報する",
+    "tx-sent": "トランザクションが送信されました",
+    "view-on-flow-view-source": "Flow View Source で見る",
+    "no-my-nft-message": "持っている NFT はありません。「発行」タブから NFT を発行してみましょう！",
+    "no-showcase-nft-message": "展示されている NFT はありません。",
+    "message-input-placeholder": "メッセージ（任意）",
+    "report-message": "この NFT の画像・文章に問題がある場合はお知らせください。",
+    "thank-you-for-reporting-message": "報告ありがとうございます！",
+    "display-notification-message": "展示すると「自分のNFT」から消えて「みんなのNFT」に表示されます。",
+    "button": {
+        "view": "みる",
+        "withdraw": "引き取る",
+        "report": "通報する",
+        "publish": "発行",
+        "send": "送信",
+        "ok": "OK",
+        "cancel": "キャンセル"
+    }
+}

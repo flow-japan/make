@@ -11,6 +11,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 import { Title } from '../components/Title';
 import { Container } from '../components/Container';
 import { Main } from '../components/Main';
@@ -19,8 +20,11 @@ import { ViewShowcase } from '../components/ViewShowcase';
 import { Create } from '../components/Create';
 import { Footer } from '../components/Footer';
 import { flow } from '../services/flow';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const Index = () => {
+  const { t } = useTranslation('common');
   const [user, setUser] = useState({});
 
   const SignInOutButton = ({ user }) => {
@@ -54,15 +58,28 @@ const Index = () => {
   return (
     <Container height="100vh">
       <Title />
+      <Box position="fixed" top="1rem" left="1rem">
+        <Link href="/" locale="ja">
+          <Button size="sm" variant="link">
+            🇯🇵 JA
+          </Button>
+        </Link>
+        {' / '}
+        <Link href="/" locale="en">
+          <Button size="sm" variant="link">
+            🇺🇸 EN
+          </Button>
+        </Link>
+      </Box>
       <Box position="fixed" top="1rem" right="1rem">
         <SignInOutButton user={user} />
       </Box>
       <Main>
         <Tabs isFitted variant="enclosed" m={4} size="sm">
           <TabList>
-            <Tab>みんなのNFT</Tab>
-            <Tab>自分のNFT</Tab>
-            <Tab>発行</Tab>
+            <Tab>{t('showcase-nfts')}</Tab>
+            <Tab>{t('my-nfts')}</Tab>
+            <Tab>{t('publish')}</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -82,5 +99,11 @@ const Index = () => {
     </Container>
   );
 };
+
+export const getStaticProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common'])),
+  },
+});
 
 export default Index;

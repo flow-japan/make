@@ -33,6 +33,14 @@ export const Footer = () => {
           <Link href="http://avcd.hns.to/" isExternal>
             avcd
           </Link>
+          {' | '}
+          <Link href="https://github.com/flow-japan/make" isExternal>
+            GitHub Repo
+          </Link>
+          {' | '}
+          <Link href="https://discord.gg/UqDbSMy9qt" isExternal>
+            Discord
+          </Link>
         </Text>
         <Stack
           direction={'row'}

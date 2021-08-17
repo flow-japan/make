@@ -4,7 +4,7 @@
     </a>
 </p>
 
-👋 ようこそ！このデモアプリは、Flow ブロックチェーンで NFT を発行するための実験的サイトです。
+👋 ようこそ！このウェブアプリは Flow ブロックチェーンで NFT を発行するための実験的なサービスです。
 
 ## 🎬 Live Demo
 
@@ -39,6 +39,21 @@ Cadence 言語で以下のスマートコントラクトを実装し、テスト
     - このコントラクトをある種の中央台帳として扱うことで、バックエンドのワーカーおよびDBを用意しなくても、他の人のNFTを一覧でみられるようにしている
     - 外部からのストレージ圧迫の攻撃を受ける可能性があるため、コントラクトには管理者だけが一時停止できる機能を持たせている
 
-## ❓ 問い合わせ先
+## ❓ 問い合わせ・要望
 
+- Discord: [Flow開発コミュニティ](https://discord.gg/UqDbSMy9qt) 
 - Twitter: [@arandoros](https://twitter.com/arandoros)
+
+---
+
+## 🇯🇵 Flow 開発コミュニティについて
+
+Flowチーム公認の日本の開発コミュニティです。開発情報の発信や勉強会を実施しています。
+
+ご興味ある方はぜひ Discord にご参加ください。
+
+- Discord: https://discord.gg/UqDbSMy9qt
+- YouTube: https://www.youtube.com/channel/UCzqVseWmvmLizVYO5iO-C1A
+- Medium: https://medium.com/flow-japan
+- Connpass: https://flow-japan-community.connpass.com/
+- 管理人：https://twitter.com/arandoros   https://twitter.com/tokchin

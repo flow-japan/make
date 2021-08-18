@@ -57,8 +57,8 @@ const Index = () => {
   };
 
   return (
-    <>
-      <Flex justifyContent="space-between">
+    <Container height="100vh">
+      <Flex justifyContent="space-between" width="100%">
         <Box mt="4" ml="6">
           <Link href="/" locale="ja">
             <Button size="sm" variant="link">
@@ -72,37 +72,37 @@ const Index = () => {
             </Button>
           </Link>
         </Box>
+        <Spacer />
         <Title />
+        <Spacer />
         <Box mt="4" mr="6">
           <SignInOutButton user={user} />
         </Box>
       </Flex>
 
-      <Container height="100vh">
-        <Main>
-          <Tabs isFitted variant="enclosed" m={4} size="sm">
-            <TabList>
-              <Tab>{t('showcase-nfts')}</Tab>
-              <Tab>{t('my-nfts')}</Tab>
-              <Tab>{t('publish')}</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <ViewShowcase user={user} />
-              </TabPanel>
-              <TabPanel>
-                <ViewCollection />
-              </TabPanel>
-              <TabPanel>
-                <Create />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Main>
-        <Spacer />
-        <Footer />
-      </Container>
-    </>
+      <Main>
+        <Tabs isFitted variant="enclosed" m={4} size="sm">
+          <TabList>
+            <Tab>{t('showcase-nfts')}</Tab>
+            <Tab>{t('my-nfts')}</Tab>
+            <Tab>{t('publish')}</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <ViewShowcase user={user} />
+            </TabPanel>
+            <TabPanel>
+              <ViewCollection />
+            </TabPanel>
+            <TabPanel>
+              <Create />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Main>
+      <Spacer />
+      <Footer />
+    </Container>
   );
 };
 

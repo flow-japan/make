@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Flex,
   Button,
   Box,
   Stack,
@@ -56,47 +57,52 @@ const Index = () => {
   };
 
   return (
-    <Container height="100vh">
-      <Title />
-      <Box position="fixed" top="1rem" left="1rem">
-        <Link href="/" locale="ja">
-          <Button size="sm" variant="link">
-            🇯🇵 JA
-          </Button>
-        </Link>
-        {' / '}
-        <Link href="/" locale="en">
-          <Button size="sm" variant="link">
-            🇺🇸 EN
-          </Button>
-        </Link>
-      </Box>
-      <Box position="fixed" top="1rem" right="1rem">
-        <SignInOutButton user={user} />
-      </Box>
-      <Main>
-        <Tabs isFitted variant="enclosed" m={4} size="sm">
-          <TabList>
-            <Tab>{t('showcase-nfts')}</Tab>
-            <Tab>{t('my-nfts')}</Tab>
-            <Tab>{t('publish')}</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <ViewShowcase user={user} />
-            </TabPanel>
-            <TabPanel>
-              <ViewCollection />
-            </TabPanel>
-            <TabPanel>
-              <Create />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </Main>
-      <Spacer />
-      <Footer />
-    </Container>
+    <>
+      <Flex justifyContent="space-between">
+        <Box mt="4" ml="6">
+          <Link href="/" locale="ja">
+            <Button size="sm" variant="link">
+              🇯🇵 JA
+            </Button>
+          </Link>
+          {' / '}
+          <Link href="/" locale="en">
+            <Button size="sm" variant="link">
+              🇺🇸 EN
+            </Button>
+          </Link>
+        </Box>
+        <Title />
+        <Box mt="4" mr="6">
+          <SignInOutButton user={user} />
+        </Box>
+      </Flex>
+
+      <Container height="100vh">
+        <Main>
+          <Tabs isFitted variant="enclosed" m={4} size="sm">
+            <TabList>
+              <Tab>{t('showcase-nfts')}</Tab>
+              <Tab>{t('my-nfts')}</Tab>
+              <Tab>{t('publish')}</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <ViewShowcase user={user} />
+              </TabPanel>
+              <TabPanel>
+                <ViewCollection />
+              </TabPanel>
+              <TabPanel>
+                <Create />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Main>
+        <Spacer />
+        <Footer />
+      </Container>
+    </>
   );
 };
 

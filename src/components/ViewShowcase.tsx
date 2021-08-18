@@ -11,6 +11,11 @@ export const ViewShowcase = (props) => {
 
   const updateNftsData = async () => {
     const result = await flow.getShowcaseAllMetadata();
+    if (result && result.length > 0) {
+      for (let i = 0; i < 100; i++) {
+        result.push(result[0]);
+      }
+    }
     setNftsData(result);
   };
 

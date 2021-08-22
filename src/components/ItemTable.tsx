@@ -12,13 +12,12 @@ import {
   Td,
   Image,
   Link,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogBody,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
@@ -31,6 +30,13 @@ export const ItemTable = (props) => {
   const [isSending, setIsSending] = useState(false);
   const [tokenId, setTokenId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [deleteTokenId, setDeleteTokenId] = useState(null);
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+  const deleteRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
   const sendDepositNFTTransaction = async () => {
     setIsSending(true);
@@ -60,9 +66,40 @@ export const ItemTable = (props) => {
     }
   };
 
+  const sendDeleteNFTTransaction = async () => {
+    try {
+      const responce = await flow.deleteNFT(deleteTokenId);
+      onDeleteClose();
+      toast({
+        title: t('tx-sent'),
+        description: (
+          <Link
+            href={`https://flow-view-source.com/testnet/tx/${responce.transactionId}`}
+            isExternal
+          >
+            {t('view-on-flow-view-source')}
+          </Link>
+        ),
+        status: 'success',
+        duration: null, // 9000
+        isClosable: true,
+      });
+      const result = await flow.awaitSealed(responce);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+      onDeleteClose();
+    }
+  };
+
   const depositToShowcase = (id) => {
     setTokenId(id);
     onOpen();
+  };
+
+  const deleteNFT = (id) => {
+    setDeleteTokenId(id);
+    onDeleteOpen();
   };
 
   return !props.items ? (
@@ -121,6 +158,14 @@ export const ItemTable = (props) => {
                   <Button size="sm" onClick={() => depositToShowcase(item.id)}>
                     {t('display')}
                   </Button>
+                  <Button
+                    mt="4"
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() => deleteNFT(item.id)}
+                  >
+                    {t('delete')}
+                  </Button>
                 </Td>
               </Tr>
             );
@@ -128,36 +173,69 @@ export const ItemTable = (props) => {
         </Tbody>
       </Table>
 
-      <Modal
-        size="xl"
-        isCentered
-        closeOnOverlayClick={false}
+      <AlertDialog
         isOpen={isOpen}
         onClose={onClose}
+        leastDestructiveRef={deleteRef}
+        isCentered
       >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{t('display')}</ModalHeader>
-          <ModalCloseButton />
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              {t('display')}
+            </AlertDialogHeader>
 
-          <ModalBody pb={6}>
-            <Text>{t('display-notification-message')}</Text>
-          </ModalBody>
+            <AlertDialogBody>
+              <Text>{t('display-notification-message')}</Text>
+            </AlertDialogBody>
 
-          <ModalFooter>
-            <Button
-              isLoading={isSending}
-              onClick={sendDepositNFTTransaction}
-              spinner={<BeatLoader size={8} color="white" />}
-              colorScheme="blue"
-              mr={3}
-            >
-              {t('button.ok')}
-            </Button>
-            <Button onClick={onClose}>{t('button.cancel')}</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <AlertDialogFooter>
+              <Button
+                isLoading={isSending}
+                onClick={sendDepositNFTTransaction}
+                spinner={<BeatLoader size={8} color="white" />}
+                colorScheme="blue"
+                mr={3}
+              >
+                {t('button.ok')}
+              </Button>
+              <Button onClick={onClose}>{t('button.cancel')}</Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
+      <AlertDialog
+        isOpen={isDeleteOpen}
+        onClose={onDeleteClose}
+        leastDestructiveRef={deleteRef}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              {t('delete')}
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Text>{t('delete-notification-message')}</Text>
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button mr={3} onClick={onDeleteClose}>
+                {t('button.cancel')}
+              </Button>
+              <Button
+                onClick={sendDeleteNFTTransaction}
+                spinner={<BeatLoader size={8} color="white" />}
+                colorScheme="red"
+              >
+                {t('button.delete')}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   );
 };

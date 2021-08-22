@@ -8,6 +8,7 @@
     "metadata-image": "画像",
     "action": "アクション",
     "display": "展示する",
+    "delete": "削除する",
     "report": "通報する",
     "tx-sent": "トランザクションが送信されました",
     "view-on-flow-view-source": "Flow View Source で見る",
@@ -17,12 +18,14 @@
     "report-message": "この NFT の画像・文章に問題がある場合はお知らせください。",
     "thank-you-for-reporting-message": "報告ありがとうございます！",
     "display-notification-message": "展示すると「自分のNFT」から消えて「みんなのNFT」に表示されます。",
+    "delete-notification-message": "本当に削除しますか？",
     "button": {
         "view": "みる",
         "withdraw": "引き取る",
         "report": "通報する",
         "publish": "発行",
         "send": "送信",
+        "delete": "削除",
         "ok": "OK",
         "cancel": "キャンセル"
     }

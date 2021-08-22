@@ -86,6 +86,20 @@ const mintNFTTransaction = `
   }
 `;
 
+const deleteNFTTransaction = `
+  import Collectible from 0xCollectible
+
+  transaction(tokenID: UInt64) {
+      prepare(acct: AuthAccount) {
+          let collection = acct.borrow<&Collectible.Collection>(from: Collectible.CollectionStoragePath)!
+          let token <- collection.withdraw(withdrawID: tokenID) as! @Collectible.NFT
+          destroy token
+
+          log("Delete NFT")
+      }
+  }
+`;
+
 const depositNFTTransaction = `
   import Collectible from 0xCollectible
   import Showcase from 0xShowcase
@@ -235,6 +249,12 @@ class FlowService {
         ],
         t.Dictionary({ key: t.String, value: t.String })
       ),
+    ]);
+  }
+
+  async deleteNFT(tokenId) {
+    return await this.sendTransaction(deleteNFTTransaction, [
+      fcl.arg(Number(tokenId), t.UInt64),
     ]);
   }
 

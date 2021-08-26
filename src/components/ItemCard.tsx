@@ -103,6 +103,7 @@ export const ItemCard = (props) => {
 
   const sameAddress = (addr1, addr2) => {
     // Address#toString() returns not zero padding address string in Cadence script
+    if (!addr1 || !addr2) return false;
     return addr1.replace(/^0x0*/, '') === addr2.replace(/^0x0*/, '');
   };
 

@@ -101,6 +101,11 @@ export const ItemCard = (props) => {
     onClose();
   };
 
+  const sameAddress = (addr1, addr2) => {
+    // Address#toString() returns not zero padding address string in Cadence script
+    return addr1.replace(/^0x0*/, '') === addr2.replace(/^0x0*/, '');
+  };
+
   return (
     <Box
       maxWidth="300px"
@@ -186,7 +191,7 @@ export const ItemCard = (props) => {
           </Text>
         </Box>
 
-        {ownerAddress === myAddress ? (
+        {sameAddress(ownerAddress, myAddress) ? (
           <Box mt="2" ml="-2">
             <Button
               size="xs"

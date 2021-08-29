@@ -228,7 +228,8 @@ class FlowService {
   }
 
   async getShowcaseAllMetadata() {
-    return await this.executeScript(getShowcaseAllMedatadaScript, []);
+    const result = await this.executeScript(getShowcaseAllMedatadaScript, []);
+    return result ? result.reverse() : result;
   }
 
   async getAllMetadata() {

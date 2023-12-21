@@ -9,7 +9,7 @@ class FleekService {
       key: `${fileName}-${Date.now()}`,
       data: imageData,
     });
-    return result.hash.replace(/\"/g, '');
+    return result.hash.replace(/"/g, '');
   }
 
   getURL(hash) {

@@ -158,7 +158,10 @@ class FlowService {
       .put('accessNode.api', 'https://rest-testnet.onflow.org') // Flow testnet
       .put('discovery.wallet', 'https://fcl-discovery.onflow.org/testnet/authn')
       .put('app.detail.title', 'Make!')
-      .put('app.detail.icon', 'https://assets.website-files.com/5f6294c0c7a8cdd643b1c820/5f6294c0c7a8cd5704b1c939_favicon.png')
+      .put(
+        'app.detail.icon',
+        'https://assets.website-files.com/5f6294c0c7a8cdd643b1c820/5f6294c0c7a8cd5704b1c939_favicon.png'
+      )
       .put('0xCollectible', '0x85875109cfe22e4a') // Testnet
       .put('0xShowcase', '0x85875109cfe22e4a') // Testnet
       .put('0xLikeToken', '0x85875109cfe22e4a'); // Testnet

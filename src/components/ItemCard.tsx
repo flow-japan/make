@@ -16,6 +16,7 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  Flex,
   Input,
   Link,
   ModalFooter,
@@ -141,7 +142,7 @@ export const ItemCard = (props) => {
       </AspectRatio>
 
       <Box p="5" pr="4">
-        <Box d="flex" alignItems="baseline" justifyContent="space-between">
+        <Flex alignItems="baseline" justifyContent="space-between">
           <Box
             color="gray.500"
             fontWeight="semibold"
@@ -174,7 +175,7 @@ export const ItemCard = (props) => {
               {likedAddressesArray.length}
             </Box>
           </Box>
-        </Box>
+        </Flex>
 
         <Box
           mt="1"

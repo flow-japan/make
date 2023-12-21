@@ -1030,7 +1030,7 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.56.0.tgz#ef20350fec605a7f7035a01764731b2de0f3782b"
   integrity sha512-gMsVel9D7f2HLkBma9VbtzZRehRogVRfbr++f06nL2vnCGCNlzOD+/MUov/F4p8myyAHspEhVobgjpX64q5m6A==
 
-"@fleekhq/fleek-storage-js@^1.0.17":
+"@fleekhq/fleek-storage-js@^1.0.24":
   version "1.0.24"
   resolved "https://registry.yarnpkg.com/@fleekhq/fleek-storage-js/-/fleek-storage-js-1.0.24.tgz#85fe0cfac997f0b47ee462b0a51e3d9dc9125da2"
   integrity sha512-2XweXT6zvQrSyYw1fXKjsuITm1b96mE52i5PoVqDQokI6l/tSyLE3UxW5uUGfk9t3ueknL1TaSy2WRZGSz2idw==

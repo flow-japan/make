@@ -46,6 +46,8 @@ export const Create = () => {
       const ipfsHash = await fleek.upload(imageData, imageFile.name);
       const imageUrl = fleek.getURL(ipfsHash);
       setItemImageUrl(imageUrl);
+    } catch (e) {
+      console.error(e);
     } finally {
       setProcessingImage(false);
     }

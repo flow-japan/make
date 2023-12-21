@@ -1,4 +1,4 @@
-import Collectible from "./Collectible.cdc"
+import "Collectible"
 
 pub contract Showcase {
     pub event Deposit(id: UInt64, tokenId: UInt64, from: Address)
@@ -22,7 +22,11 @@ pub contract Showcase {
         }
 
         pub fun borrowNFT(): &Collectible.NFT {
-            return &self.token["token"] as &Collectible.NFT
+            return (&self.token["token"] as &Collectible.NFT?)!
+        }
+
+        access(contract) fun withdraw(): @Collectible.NFT {
+            return <- self.token.remove(key: "token")!
         }
 
         destroy() {
@@ -34,7 +38,7 @@ pub contract Showcase {
         if Showcase.isPaused {
             panic("Showcase is paused")
         }
-        self.itemIdCount = self.itemIdCount + 1 as UInt64
+        self.itemIdCount = self.itemIdCount + 1
         emit Deposit(id: self.itemIdCount, tokenId: token.id, from: ownerAddress)
         self.items[self.itemIdCount] <-! create Item(ownerAddress: ownerAddress, token: <- token)
     }
@@ -45,7 +49,7 @@ pub contract Showcase {
             panic("Showcase is paused")
         }
         let item <- self.items.remove(key: itemId)!
-        let token <- item.token.remove(key: "token")!
+        let token <- item.withdraw()
         destroy item
         emit Withdraw(id: self.itemIdCount)
         return <- token
@@ -56,7 +60,7 @@ pub contract Showcase {
     }
 
     pub fun borrowItem(itemId: UInt64): &Showcase.Item {
-        return &self.items[itemId] as &Showcase.Item
+        return (&self.items[itemId] as &Showcase.Item?)!
     }
 
     pub resource Admin {

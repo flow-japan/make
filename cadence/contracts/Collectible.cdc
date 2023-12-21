@@ -1,6 +1,6 @@
-// import NonFungibleToken from "./NonFungibleToken.cdc"
-import NonFungibleToken from 0x631e88ae7f1d7c20 // Testnet
-import LikeToken from "./LikeToken.cdc"
+import "NonFungibleToken"
+// import NonFungibleToken from 0x631e88ae7f1d7c20 // Testnet
+import "LikeToken"
 
 pub contract Collectible: NonFungibleToken {
     pub event ContractInitialized()
@@ -20,7 +20,7 @@ pub contract Collectible: NonFungibleToken {
         pub var likes: @{Address: LikeToken.NFT}
 
         init(metadata: {String: String}) {
-            Collectible.totalSupply = Collectible.totalSupply + 1 as UInt64
+            Collectible.totalSupply = Collectible.totalSupply + 1 
             self.id = Collectible.totalSupply
             self.metadata = metadata
             self.likes <- {}
@@ -97,11 +97,11 @@ pub contract Collectible: NonFungibleToken {
         }
 
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
-            return &self.ownedNFTs[id] as &NonFungibleToken.NFT
+            return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
         }
 
         pub fun borrowCollectible(id: UInt64): &Collectible.NFT {
-            let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            let ref = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
             return ref as! &Collectible.NFT
         }
 

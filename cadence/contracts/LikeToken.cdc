@@ -1,5 +1,5 @@
-// import NonFungibleToken from "./NonFungibleToken.cdc"
-import NonFungibleToken from 0x631e88ae7f1d7c20 // Testnet
+import "NonFungibleToken"
+// import NonFungibleToken from 0x631e88ae7f1d7c20 // Testnet
 
 pub contract LikeToken: NonFungibleToken {
     pub event ContractInitialized()
@@ -17,7 +17,7 @@ pub contract LikeToken: NonFungibleToken {
         pub let minter: Address
 
         init(minter: Address) {
-            LikeToken.totalSupply = LikeToken.totalSupply + 1 as UInt64
+            LikeToken.totalSupply = LikeToken.totalSupply + 1
             self.id = LikeToken.totalSupply
             self.minter = minter
         }
@@ -78,11 +78,11 @@ pub contract LikeToken: NonFungibleToken {
         }
 
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
-            return &self.ownedNFTs[id] as &NonFungibleToken.NFT
+            return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
         }
 
         pub fun borrowLike(id: UInt64): &LikeToken.NFT {
-            let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            let ref = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
             return ref as! &LikeToken.NFT
         }
 

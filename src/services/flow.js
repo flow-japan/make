@@ -155,11 +155,10 @@ class FlowService {
       .config()
       // .put("accessNode.api", "http://localhost:8080") // local Flow emulator
       // .put("challenge.handshake", "http://localhost:8701/flow/authenticate") // local dev wallet
-      .put('accessNode.api', 'https://access-testnet.onflow.org') // Flow testnet
-      .put(
-        'challenge.handshake',
-        'https://flow-wallet-testnet.blocto.app/authn'
-      ) // Blocto testnet wallet
+      .put('accessNode.api', 'https://rest-testnet.onflow.org') // Flow testnet
+      .put('discovery.wallet', 'https://fcl-discovery.onflow.org/testnet/authn')
+      .put('app.detail.title', 'Make!')
+      .put('app.detail.icon', 'https://assets.website-files.com/5f6294c0c7a8cdd643b1c820/5f6294c0c7a8cd5704b1c939_favicon.png')
       .put('0xCollectible', '0x85875109cfe22e4a') // Testnet
       .put('0xShowcase', '0x85875109cfe22e4a') // Testnet
       .put('0xLikeToken', '0x85875109cfe22e4a'); // Testnet
